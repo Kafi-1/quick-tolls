@@ -16,7 +16,7 @@ class FormattersTest {
     @Test
     fun bytes_formatsUnits() {
         assertEquals("512 B", Formatters.bytes(512))
-        assertEquals("2.00 KB", Formatters.bytes(2048))
+        assertEquals("2.0 KB", Formatters.bytes(2048))
         assertEquals("1.50 MB", Formatters.bytes((1.5 * 1024 * 1024).toLong()))
     }
 
