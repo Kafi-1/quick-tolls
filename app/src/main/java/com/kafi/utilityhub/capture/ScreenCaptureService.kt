@@ -73,11 +73,14 @@ class ScreenCaptureService : LifecycleService() {
             return
         }
         projection = result
-        result.registerCallback(object : MediaProjection.Callback() {
-            override fun onStop() {
-                release()
-            }
-        })
+        result.registerCallback(
+            object : MediaProjection.Callback() {
+                override fun onStop() {
+                    release()
+                }
+            },
+            Handler(Looper.getMainLooper())
+        )
         startCapture(result)
     }
 

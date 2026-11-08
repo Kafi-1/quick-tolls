@@ -14,6 +14,8 @@ import android.media.projection.MediaProjection
 import android.net.Uri
 import android.media.projection.MediaProjectionManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.lifecycle.LifecycleService
@@ -73,9 +75,12 @@ class ScreenRecordService : LifecycleService() {
             return
         }
         projection = result
-        result.registerCallback(object : MediaProjection.Callback() {
-            override fun onStop() = stopRecording()
-        })
+        result.registerCallback(
+            object : MediaProjection.Callback() {
+                override fun onStop() = stopRecording()
+            },
+            Handler(Looper.getMainLooper())
+        )
         try {
             setupRecorder(result)
             recording = true
@@ -100,8 +105,8 @@ class ScreenRecordService : LifecycleService() {
             else -> 720
         }
         val scale = targetHeight.toFloat() / metrics.heightPixels
-        var width = (metrics.widthPixels * scale).toInt() and 0xFFFFFFFE
-        var height = targetHeight and 0xFFFFFFFE
+        var width = (metrics.widthPixels * scale).toInt() and EVEN_MASK
+        var height = targetHeight and EVEN_MASK
         if (width < 2) width = 2
         if (height < 2) height = 2
 
@@ -220,6 +225,9 @@ class ScreenRecordService : LifecycleService() {
 
     companion object {
         private const val NOTIFICATION_ID = 2002
+
+        // 0xFFFFFFFE as a signed Int: clears the low bit so encoder dimensions stay even
+        private const val EVEN_MASK = -2
         const val ACTION_START = "com.kafi.utilityhub.capture.RECORD_START"
         const val ACTION_STOP = "com.kafi.utilityhub.capture.RECORD_STOP"
         const val ACTION_RESULT = "com.kafi.utilityhub.capture.RECORD_RESULT"

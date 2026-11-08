@@ -81,7 +81,8 @@ class VolumeActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val filter = IntentFilter().apply {
-            addAction(AudioManager.VOLUME_CHANGED_ACTION)
+            // AudioManager.VOLUME_CHANGED_ACTION is hidden from the public SDK
+            addAction("android.media.VOLUME_CHANGED_ACTION")
             addAction(AudioManager.RINGER_MODE_CHANGED_ACTION)
         }
         ContextCompat.registerReceiver(this, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
